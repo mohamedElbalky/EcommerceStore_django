@@ -19,7 +19,10 @@ def all_products_view(request, category_slug=None):
     #     products = Product.objects.filter(in_stock=True, is_active=True)
     # except Product.DoesNotExist:
     #     raise Http404
-    products = get_list_or_404(Product, in_stock=True, is_active=True)
+    try:
+        products = Product.products.all()
+    except Product.DoesNotExist:
+        raise Http404
     category_obj = None
     all_products = True
     if category_slug is not None:
@@ -63,8 +66,8 @@ def search_view(request, *args, **kwargs):
     q = request.GET.get("q")
     qs = None
     if q is not None:
-        lookups = Q(title__icontains=q) | Q(description__icontains=q)
-        qs = Product.objects.filter(lookups)
+        # lookups = Q(title__icontains=q) | Q(description__icontains=q)
+        qs = Product.products.search(q)
     print(qs)
 
     context = {

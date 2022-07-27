@@ -14,10 +14,10 @@ Search
     
 
 
-<section class="py-5 text-center container">
+<section class="mt-5 text-center container">
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
-      <h1 class="fw-light">Books shope</h1>
+      <h1 class="fw-light">Books store</h1>
       <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
       <p>
         <a href="#" class="btn btn-primary my-2">Contact us</a>
@@ -25,6 +25,10 @@ Search
     </div>
   </div>
 </section>
+<form action="{% url 'store:search' %}" method="GET" class="d-flex mb-5">
+  <input class="form-control me-2" placeholder="Search" name="q">
+  <button class="btn btn-outline-success">Search</button>
+</form>
 
   <div class="album py-5" style="background-color: #f8f9fa;">
     <div class="container">

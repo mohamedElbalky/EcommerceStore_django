@@ -1,6 +1,9 @@
 from django.contrib import admin
-
+from django.contrib.sessions.models import Session
 from .models import Category, Product
+
+
+admin.site.register(Session)
 
 
 @admin.register(Category)
