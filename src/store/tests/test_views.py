@@ -31,6 +31,12 @@ class TestViewResponces(TestCase):
             is_active=True
         )
 
+    def test_allowed_host(self):
+        response = self.c.get("/", HTTP_HOST="momo.com")
+        self.assertEqual(response.status_code, 400)
+        response = self.c.get("/", HTTP_HOST="elbalky.com")
+        self.assertEqual(response.status_code, 200)
+
     def test_all_products_url(self):
         """test all products url / """
         res = self.c.get("/")
@@ -56,7 +62,7 @@ class TestViewResponces(TestCase):
     def test_product_detail_url_three(self):
         """test url for product detail /item/product_slug/"""
         pro_slug = self.pr.slug
-        res = self.c.get(f"/item/{pro_slug}/")
+        res = self.c.get(f"/book/{pro_slug}/")
         print(res.reason_phrase)
 
         self.assertEqual(res.status_code, 200)
@@ -73,7 +79,6 @@ class TestViewResponces(TestCase):
         """test search"""
         res = self.c.get("/search/", {"q": "django"})
         self.assertEqual(res.status_code, 200)
-
 
     def test_using_factory(self):
         """using factory in test"""

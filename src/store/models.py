@@ -8,8 +8,12 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.db.models import Q
 
 USER = settings.AUTH_USER_MODEL
+
+
+
 
 
 class Category(models.Model):
@@ -37,6 +41,14 @@ class Category(models.Model):
 #     return path
 
 
+class ProductModelMAnager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(in_stock=True, is_active=True)
+
+    def search(self, query):
+        lookups = Q(title__icontains=query) | Q(description__icontains=query)
+        return self.get_queryset().filter(lookups)
+
 class Product(models.Model):
     category = models.ForeignKey(
         Category, related_name="product_catogery", on_delete=models.CASCADE)
@@ -54,6 +66,9 @@ class Product(models.Model):
     is_active = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
+    products = ProductModelMAnager()
 
     class Meta:
         verbose_name_plural = "products"
