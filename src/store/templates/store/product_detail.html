@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
+<div id="detail-alert-box" class="not-visible alert alert-success" role="alert">
+  You successed to add book to your cart
+</div>
 <div class="container">
   <main class="pt-5">
     <div class="row g-3">
@@ -25,23 +28,95 @@
           <div class="col">
             <div class="row p-3">
               <div class="col-6">
-                <label for="select">Qty</label>
-                <select id="select">
-                  <option value="">1</option>
-                  <option value="">2</option>
-                  <option value="">3</option>
-                  <option value="">4</option>
-                </select>
+                <!-- <label for="select">Qty</label> -->
+                <!-- <select id="select">
+                  {% for num in product_qty %}
+                  <option value="{{num}}">{{num}}</option>
+                  {% endfor %}
+                </select> -->
+
+                <input id="select" class="d-inline form-control  w-25" type="number" value="1" max="{{product.qty}}"
+                  min="1">
+                <label for="">Qty</label>
 
               </div>
-              <div class="col-6 text-end"><button type="button" class="btn btn-secondary btn-sm">Add to
-                  basket</button></div>
+              <div class="col-6 text-end">
+
+                  <button id="add-btn" data-qty="hello" value="{{product.id}}" type="button"
+                    class="btn btn-secondary btn-sm">Add to cart</button>
+
+              </div>
             </div>
           </div>
         </div>
+        <small class="text-secondary" id="quantity-text">&dash; ({{product.qty}}) book{{product.qty|pluralize}} avaliab
+        </small>
       </div>
     </div>
   </main>
 
 </div>
+
+
+<script>
+  const addCartBtn = document.getElementById("add-btn")
+  const product_qty = document.getElementById("select")
+ // const csrf = document.getElementsByName("csrfmiddlewaretoken")[0]
+  const alertBox = document.getElementById("detail-alert-box")
+
+  const qtyMessage = document.getElementById("quantity-text")
+
+
+
+
+
+  addCartBtn.addEventListener("click", (e) => {
+    e.preventDefault()
+    // console.log(e.target.dataset.qty)
+    const productId = e.target.value
+    const qtyValue = product_qty.value
+    // console.log(qtyValue)
+
+    // let formData = new FormData();
+    // formData.append("csrfmiddlewaretoken", csrf.value);
+    // formData.append("product_id", productId);
+    // formData.append("qty_value", qtyValue);
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'cart:cart_add' %}",
+      data: {
+        "csrfmiddlewaretoken": "{{csrf_token}}",
+        "product_id": productId,
+        "qty_value": qtyValue,
+        "action": "post"
+      },
+      // data: formData,
+      success: function (data) {
+
+        if (data.erorr_quantity) {
+          qtyMessage.innerHTML = `quantity must greater than 0 and less than ${data.erorr_quantity}`
+          qtyMessage.classList.add("text-danger")
+        } else {
+          alertBox.classList.remove("not-visible")
+          setInterval(() => {
+            alertBox.classList.add("not-visible")
+          }, 3000)
+
+          document.getElementById("cart-products-number").innerHTML = data.cart_length
+          qtyMessage.innerHTML = `books added to cart`
+          qtyMessage.classList.remove("text-danger")
+          qtyMessage.classList.add("text-success")
+        }
+
+
+      },
+      error: (xhr, errmsg, err) => {
+        console.log(errmsg)
+      }
+
+    })
+
+  })
+</script>
 {% endblock %}

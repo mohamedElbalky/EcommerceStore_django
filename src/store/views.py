@@ -56,7 +56,8 @@ def product_detail(request, slug):
 
     product = get_object_or_404(Product, slug=slug, in_stock=True)
     context = {
-        "product": product
+        "product": product,
+        "product_qty": range(1, product.qty + 1)
     }
     return render(request, "store/product_detail.html", context)
 

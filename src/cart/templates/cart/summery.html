@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+cart
+{% endblock title %}
+
+
+
+{% block content %}
+<div id="delete-alert-box" class="not-visible alert alert-danger" role="alert">
+  You successed to delete book from the cart
+</div>
+
+<div id="update-alert-box" class="not-visible alert alert-success" role="alert">
+  You successed to update book from the cart
+</div>
+
+<main class="pt-5">
+  <div class="container">
+    <h1 class="h2">Shopping cart</h1>
+
+    {% if cart %}
+
+    {% for item in cart_ %}
+    {% with product=item.product %}
+
+    <div id="{{product.id}}" class="row mb-2 mt-4 border pt-3 pb-3" style="background-color: #f8f9fa;">
+      <div class="col-md-3 col-lg-2 order-md-first">
+        <img class="img-fluid  mx-auto d-block" alt="Responsive image" src="{{ product.image.url }}">
+      </div>
+      <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
+        <a href="{{product.get_absolute_url}}" class="text-decoration-none text-reset">
+          <h1 class="h5 pt-2">{{product.title}}</h1>
+        </a>
+        <div class="border mt-3">
+          <div class="col ">
+            <div class="row p-3">
+              <div class="col-6">Hardback</div>
+              <div class="col-6 text-end h4 fw-bold">$<span  name="item-product-price" id="{{product.id}}">{{ product.price }}</span></div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="row p-3">
+              <div class="col-lg-5 col-md-5 col-sm-3 form-row">
+                <!-- <label for="">Qty</label>
+                <select id="select">
+                  {% with ''|center:item.product.qty as range %}
+
+                  {% for _ in range %}
+                  <option value="{{ forloop.counter }}">
+                    {{forloop.counter }}
+                  </option>
+
+
+                  {% endfor %}
+                  {% endwith %}
+                </select> -->
+
+                <input name="input-list" class="d-inline form-control w-25" data-index="{{product.id}}"
+                  value="{{item.quantity}}" type="number" max="{{product.qty}}" min="1">
+                <label for="">Qty</label>
+
+              </div>
+              <div class="col-lg-7 col-md-7 col-sm-9 text-end">
+
+                <button id="update-btn" name="update-btn" value="{{product.id}}" type="button"
+                  class="btn btn-secondary btn-sm">Update</button>
+
+                <!-- erorr -->
+                <button id="delete-btn" name="delete-btn" value="{{product.id}}" type="button"
+                  class="btn btn-danger btn-sm ">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <small name="test-massage" id="{{product.id}}" class="text-secondary">&dash; number of available books to buying are
+          {{item.product.qty}}
+          book{{item.product.qty|pluralize}} </small>
+      </div>
+    </div>
+    {% endwith %}
+
+    {% endfor %}
+    <div class="col-12 text-end">
+      <div class="h6 fw-bold">Sub total: $<span id="cart-total-price">{{cart.get_total_price}}</span></div>
+    </div>
+    {% else %}
+    <h5 class="text-center text-secondary mb-5  mt-5">You don't have books in your cart, <a
+        href="{% url 'store:all_products' %}">back to book list</a></h5>
+    {% endif %}
+  </div>
+</main>
+
+
+
+<script>
+  const alertDeleteBox = document.getElementById("delete-alert-box")
+  const alertUpdateBox = document.getElementById("update-alert-box")
+
+  const erorrQtyMessageList = document.getElementsByName("test-massage")
+
+
+  const deleteCartBtns = document.getElementsByName("delete-btn")
+  const updateCartBtn = document.getElementsByName("update-btn")
+
+  const inputList = document.getElementsByName("input-list")
+
+  // total number of products from the header
+  const totalQuantity = document.getElementById("cart-products-number")
+
+
+  const cartTotalPrice = document.getElementById("cart-total-price")
+
+
+  const itemTotalPrice = document.getElementsByName("item-product-price")
+
+
+  const alertfunc = (alertBoxName) => {
+    alertBoxName.classList.remove("not-visible")
+    setInterval(() => {
+      alertBoxName.classList.add("not-visible")
+    }, 3000)
+  }
+
+  // make for loop on all delete buttons in the page
+  deleteCartBtns.forEach(element => {
+    // when click delete button
+    element.addEventListener("click", e => {
+      e.preventDefault()
+      
+      // determine productId from delete button atribute (value) 
+      const productId = e.target.value;
+
+      $.ajax({
+        type: "POST",
+        url: "{% url 'cart:cart_delete' %}",
+        data: {
+          "csrfmiddlewaretoken": "{{csrf_token}}",
+          "product_id": productId,
+          "action": "delete",
+        },
+        success: function (data) {
+
+          alertfunc(alertDeleteBox)
+
+          // remove the item from the page
+          document.getElementById(productId).remove()
+
+          // update total cart products number and total cart price
+          totalQuantity.innerHTML = data.cart_length
+          cartTotalPrice.innerHTML = data.cart_total_price
+        },
+        error: (xhr, errmsg, err) => {
+          console.log(err)
+        }
+      })
+    })
+  });
+
+
+  const getTextMessage = (erorrQtyMessageList, productId, type, data=null) => {
+    erorrQtyMessageList.forEach(el => {
+      const erorrMessageId = el.getAttribute("id")
+      if (erorrMessageId == productId) {
+        if (type == "updated") {
+          el.innerHTML = `&dash; books quantity updated`
+          el.classList.remove("text-danger")
+          el.classList.add("text-success")
+        } else {
+          if (type == "not-updated") {
+            el.innerHTML = `&dash; The quantity must greater than 0 and less than or equal ${data.erorr_quantity}`
+            el.classList.remove("text-secondary")
+            el.classList.add("text-danger")
+          }
+        }
+        
+        
+      }
+    })
+
+  }
+
+  updateCartBtn.forEach(element => {
+    element.addEventListener("click", e => {
+      e.preventDefault();
+      const productId = e.target.value;
+      let qty;
+      inputList.forEach(el => {
+        const inputIndex = el.getAttribute("data-index")
+        if (inputIndex == productId) {
+          qty = el.value
+
+        }
+      })
+      // console.log(qty)
+
+      $.ajax({
+        type: "POST",
+        url: "{% url 'cart:cart_update' %}",
+        data: {
+          "csrfmiddlewaretoken": "{{csrf_token}}",
+          "product_id": productId,
+          "quantity": qty,
+          "action": "put"
+        },
+        success: function (data) {
+          console.log(data)
+
+          if (data.erorr_quantity) {
+
+            getTextMessage(erorrQtyMessageList, productId, "not-updated", data=data)
+
+          } else {
+
+
+            alertfunc(alertUpdateBox)
+
+            totalQuantity.innerHTML = data.cart_length
+            cartTotalPrice.innerHTML = data.cart_total_price
+
+
+            getTextMessage(erorrQtyMessageList, productId, "updated")
+
+            // update item total price
+            itemTotalPrice.forEach(el => {
+              const product_id = el.id
+              if (product_id == productId) {
+                el.innerHTML = data.item_total_price
+              }
+            })
+
+          }
+        },
+        error: function (xhr, errmsg, err) {
+          console.log(errmsg)
+        }
+
+      })
+
+
+    })
+  });
+
+
+  
+
+</script>
+
+
+{% endblock content %}
