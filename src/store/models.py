@@ -1,19 +1,15 @@
 
-
-from email.policy import default
-from itertools import product
-from random import randint
-
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+
+
 
 USER = settings.AUTH_USER_MODEL
-
-
-
 
 
 class Category(models.Model):
@@ -46,7 +42,7 @@ class ProductModelMAnager(models.Manager):
         return super().get_queryset().filter(in_stock=True, is_active=True)
 
     def search(self, query):
-        lookups = Q(title__icontains=query) | Q(description__icontains=query)
+        lookups = Q(title__icontains=query) | Q(category__name__icontains=query) | Q(description__icontains=query)
         return self.get_queryset().filter(lookups)
 
 class Product(models.Model):
@@ -64,6 +60,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=4, decimal_places=2)
     in_stock = models.BooleanField(default=True)
     is_active = models.BooleanField(default=False)
+    qty = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

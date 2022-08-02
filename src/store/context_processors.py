@@ -8,3 +8,5 @@ def categories(request):
         "categories": categories
     }
     return context
+
+
