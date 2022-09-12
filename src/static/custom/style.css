@@ -1,3 +1,135 @@
+/* Bootstrap Over-ride */
+@media (min-width: 1000px){
+    .container{
+        max-width: 1000px;
+    }
+}
+@media (max-width: 1200px){
+    .container{
+        max-width: 100%;
+        padding:0 24px;
+    }
+}
+.dropdown-toggle::after {
+    display: none;
+}
+.dropdown-menu{
+    top:58px;
+    left:0px;
+    padding:10px;
+}
+
+.alert-primary{
+    background-color: #E4F1FF;
+}
+
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+html, body, p, div{
+    letter-spacing: -0.02px;
+    font-family: 'Roboto', sans-serif;
+}
+.fs12{
+    font-size: 12px;
+}
+.fs15{
+    font-size: 0.9375rem;
+}
+
+.fw300{
+    font-weight: 300;
+}
+.fw500{
+    font-weight: 500;
+}
+
+
+/* Navigation-Main*/
+
+/* xs */
+.logo {
+    width: 49px;
+    height: auto;
+}
+/* sm */
+@media (min-width: 768px) {
+    .logo {
+        width: 49px;
+    }
+}
+/* md */
+@media (min-width: 992px) {
+    .logo {
+        width: 60px;
+    }
+}
+/* lg */
+@media (min-width: 1200px) {
+    .logo {
+        width: 70px;
+    }
+}
+
+/* Footer */
+
+.footer > div > div > ul > li{
+    padding-bottom:8px;
+}
+
+
+
+/* cart css */
+.basket-qty{
+    color: #fff;
+    background: #d42114;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 11px;
+    height: 15px;
+    width: 14px;
+    position: absolute;
+    box-sizing: content-box;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 1px;
+    right: 10px;
+}
+
+.basket-btn{
+    position: relative;
+}
+
+.basket-btn:hover, .basket-btn:focus, .basket-btn:active, .basket-btn.active{
+    color:#d42114;
+    transition-duration: 0.4s;
+    background-color: #fff;
+}
+
+
+
+
+.update_remove_button_css { 
+    outline: none;
+    padding: 5px; 
+    border: 0px; 
+    box-sizing: none; 
+    background-color: transparent; 
+    color: #1f78fd;
+  }
+
+.update_remove_button_css:hover {
+    color: #d42114;
+  }
+
+
+
+
+
+
 .selected {
     background-color: #0d6efd;
     color: white;
@@ -9,4 +141,97 @@
 
 .not-visible {
     display: none;
+}
+
+.input-field {
+    margin-bottom: 30px;
+}
+
+
+.input-field .inp {
+    border: none;
+    outline: none;
+    padding: 5px;
+    height: 35px;
+    display: block;
+    width: 100%;
+    border-bottom: 2px solid #c6c7c8;
+    background-color: #ffffff;
+
+}
+
+
+.radiobtn {
+    display: flex;
+    justify-content: space-between; 
+    width: 97%;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #f5ba6e;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 6px;
+
+}
+
+
+.radiobtn input:hover {
+    cursor: pointer;
+}
+
+
+.error {
+    color: #d42114;
+    font-weight: bold;
+}
+
+
+.country {
+    background-color: #fff;
+    cursor: pointer;
+}
+
+
+.go-up-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 100;
+    background-color: #b0edd7;
+    border-radius: 7px;
+    padding: 3px 5px;
+    box-shadow: #c6c7c8 2px 2px 2px;
+    
+
+}
+
+.input-checked:checked .radiobtn{
+    background-color: #ed9624;
+}
+
+
+/* braintree */
+
+
+
+/* braintree hosted fields */
+.payment-form .field {
+    font-size:20px;
+    color:#666;
+    width:100%;
+    height:30px;
+    margin-bottom:10px;
+    padding:6px 12px;
+    border:0;
+    background:#efefef;
+    color:#666;
+    border-radius:4px;
+    text-align: center;
+}
+
+thead th, tbody tr.total {
+    background:#5993bb;
+    color:#fff;
+    font-weight:bold;
 }

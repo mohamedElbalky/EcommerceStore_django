@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+Checkout
+{% endblock title %}
+
+
+
+{% block content %}
+
+<div class="container">
+  <form action="" method="POST">
+    {% csrf_token %}
+    <div class="card shadow-custom border-0 col-lg-10 col-md-8 col-sm-8 mx-auto mb-3">
+      <h3 class="py-2 font-weight-bold text-grey text-center">
+        Delivery information:
+
+      </h3>
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field">
+            <label class="text-muted">First name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+
+            {% for error in form.first_name.errors %}
+            <li class="error">{{error}}</li>
+            {% endfor %}
+
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field">
+            <label class="text-muted">Last name</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+            {% for error in form.last_name.errors %}
+            <li class="error">{{error}}</li>
+            {% endfor %}
+
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field">
+            <label class="text-muted">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+
+            {% for error in form.email.errors %}
+            <li class="error">{{error}}</li>
+            {% endfor %}
+
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field">
+            <label class="text-muted">Phone number</label>
+            {{ form.telephone }}
+            {% if form.telephone.errors %}
+
+            {% for error in form.telephone.errors %}
+            <li class="error">{{error}}</li>
+            {% endfor %}
+
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <hr class="mt-0">
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field">
+            <label class="text-muted">Address</label>
+            {{ form.address }}
+            {% if form.address.errors %}
+              {% for error in form.address.errors %}
+                <ul>
+                  <li class="error">{{error}}</li>
+                </ul>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field">
+            <label class="text-muted">Postal code</label>
+            {{ form.postal_code }}
+            {% if form.postal_code.errors %}
+
+            {% for error in form.postal_code.errors %}
+            <li class="error">{{error}}</li>
+            {% endfor %}
+
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field mb-0">
+            <label class="text-muted">City</label>
+            {{ form.city }}
+            {% if form.city.errors %}
+
+            {% for error in form.city.errors %}
+            <li class="error">{{error}}</li>
+            {% endfor %}
+
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="input-field mb-0">
+            <label class="text-muted">Country</label>
+            {{ form.country }}
+            {% if form.country.errors %}
+
+            {% for error in form.country.errors %}
+            <li class="error">{{error}}</li>
+            {% endfor %}
+
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <hr>
+      <h4 class="py-2 font-weight-bold text-grey">
+        Transport:
+      </h4>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="radiobtn" id="radiobtn_0">
+            <label for="id_transport_0">
+              Courier delivery
+            </label>
+            <div>
+              <span class="text-danger pr-3 font-weight-bold" id="trnsport-cost">
+                ${{ transport_cost }}</span>
+              <input checked type="radio" id="id_transport_0" name="transport" value="Courier delivery"
+                amount="{{ transport_cost }}"  onclick="setTotalCost(this.value)" />
+            </div>
+          </div>
+          <div class="radiobtn" id="radiobtn_1">
+            <label for="id_transport_1">Recipient pickup
+            </label>
+            <div>
+              <span class="text-green pr-3 font-weight-bold">
+                free
+              </span>
+              <input  type="radio" id="id_transport_1" name="transport" value="Recipient pickup" amount="free"
+                onclick="setTotalCost(this.value)" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="mb-4">
+      <div class="input-field">
+        <label class="text-muted">Note</label>
+        {{ form.note }}
+        {% if form.note.errors %}
+
+        {% for error in form.note.errors %}
+        <li class="error">{{error}}</li>
+        {% endfor %}
+
+        {% endif %}
+      </div>
+      <h4 class="py-2 font-weight-bold text-grey">Price total:
+        <span id="order-total" class="text-danger float-end">
+
+        </span>
+      </h4>
+    </div>
+    <div class="col-lg-10 col-md-8 col-sm-8 mx-auto mb-3">
+      <div class="row justify-content-end">
+        <div class="col-lg-8 px-0">
+          <div class="btn-group d-flex">
+            <a href="{% url 'store:all_products' %}" class="btn btn-warning shadow-custom col">
+              Back to shop
+            </a>
+            <button type="submit" class="btn btn-danger shadow-custom col">
+              Create order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  const orderTotal = "{{cart.get_total_price}}"
+  const transportCost = "{{ transport_cost }}"
+  const total = document.getElementById("order-total")
+  let deleverySelect = "Courier delivery"
+  
+  function checked_style(id1, id2) {
+    document.getElementById(id1).style.background = "#ed9624"
+    document.getElementById(id2).style.background = "#f5ba6e"
+  }
+  
+  function setTotalCost(value) {
+      if (value === deleverySelect) {
+          total.innerHTML = +orderTotal + +transportCost 
+          checked_style("radiobtn_0", "radiobtn_1")
+          document.getElementById("radiobtn_0").checked = true
+          
+          
+      } else {
+          total.innerHTML = orderTotal
+          checked_style("radiobtn_1", "radiobtn_0")
+          document.getElementById("radiobtn_1").checked = true
+          
+      }
+  }
+
+  setTotalCost(deleverySelect)
+</script>
+
+{% endblock content %}

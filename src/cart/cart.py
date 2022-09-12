@@ -1,4 +1,5 @@
 from decimal import Decimal
+from urllib import request
 from django.conf import settings
 from store.models import Product
 
@@ -64,7 +65,7 @@ class Cart:
         """return the total price of all products in the cart"""
         total_price = sum(Decimal(item["price"]) * Decimal(item["quantity"])
                           for item in self.cart.values())
-        return total_price
+        return round(total_price, 2)
 
     def delete(self, product_id):
         if str(product_id) in self.cart:
@@ -76,4 +77,7 @@ class Cart:
         if str(product_id) in self.cart:
             self.cart[str(product_id)]["quantity"] = quantity
             self.save()
+
+    def cart_clear(self):
+        del self.session[settings.CART_SESSION_ID]
 
