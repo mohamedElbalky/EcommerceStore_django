@@ -5,3 +5,7 @@ Billding Django E-commerce Stire
   - Django Templating
   - Using Unittest
   - Testing with Pytest
+  - Make custome user model
+  - using celery to end email
+  - make online paymeny by using braintree
+  
