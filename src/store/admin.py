@@ -23,3 +23,5 @@ class ProductAdmin(admin.ModelAdmin):
     # prepopulated_fields = {"slug": ("title", )}
     date_hierarchy = "created"
     readonly_fields = ("slug", "created", "updated")
+    raw_id_fields = ("category", "created_by")
+    

@@ -24,11 +24,11 @@ except ImportError:
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
+    'account.apps.AccountConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,9 +36,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 3rd
+    'django_countries',
+    'crispy_forms',
+
+    # my apps
     'store.apps.StoreConfig',
     'cart.apps.CartConfig',
+    'order.apps.OrderConfig',
+    'payment.apps.PaymentConfig',
+
 ]
+
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -63,6 +74,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # custome context processors
                 'store.context_processors.categories',
                 'cart.context_processors.cart',
                 'cart.context_processors.cart_length',
@@ -124,7 +137,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     BASE_DIR / "static/bootstrap/"
 ]
-
+STATIC_ROOT = BASE_DIR / 'static_root/'
 
 
 MEDIA_URL = '/media/'
@@ -138,3 +151,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CART_SESSION_ID = "cart_key"
+
+
+# telling Django to use our custom model instead the default one.
+AUTH_USER_MODEL = 'account.UserBase'
+
+
+LOGIN_URL = '/account/login/'
+LOGIN_REDIRECT_URL = '/account/dashboard/'
+
+# AUTHENTICATION_BACKENDS = (,)
+AUTHENTICATION_BACKENDS = [
+    'account.backends.EmailBackend',
+    # 'django.contrib.auth.backends.ModelBackend',
+]  # new
+
+
+ALLOWED_ORIGINS = ['http://*', 'https://*']
+CSRF_TRUSTED_ORIGINS = ALLOWED_ORIGINS.copy()

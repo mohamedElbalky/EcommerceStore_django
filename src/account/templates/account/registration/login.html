@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Login
+{% endblock title %}
+   
+
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row no-gutter">
+      <div class="col-md-12">
+        <div class="login d-flex align-items-center py-5">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-10  mx-auto">
+                <form method="POST" class=" p-4 rounded col-lg-10 mx-auto">
+                  <h2 class="mb-2 font-weight-bold">Login</h2>
+                  {% csrf_token %}
+                    {{form|crispy}}
+  
+                  <div class="d-grid gap-2">
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <button class="btn btn-primary py-2 mb-4 mt-5 fw-bold" type="submit" value="Log-in">Sign in
+                    </button>
+                </div>
+                <a href="{% url 'account:password_reset' %}">forget my password</a>,
+                    <a href="{% url 'account:register' %}">Craete new account</a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock content %}
+    

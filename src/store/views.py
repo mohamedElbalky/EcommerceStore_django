@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_list_or_404, get_object_or_404, render
-
+from django.contrib.auth.decorators import login_required
 from .models import Category, Product
 
 # def all_categories(request):
@@ -13,7 +13,7 @@ from .models import Category, Product
 
 
 
-
+@login_required
 def all_products_view(request, category_slug=None):
     # try:
     #     products = Product.objects.filter(in_stock=True, is_active=True)
@@ -45,7 +45,7 @@ def all_products_view(request, category_slug=None):
     }
     return render(request, "store/home.html", context)
 
-
+@login_required
 def product_detail(request, slug):
     # try:
     #     product = Product.objects.get(slug=slug, in_stock=True)
@@ -62,7 +62,7 @@ def product_detail(request, slug):
     return render(request, "store/product_detail.html", context)
 
 
-
+@login_required
 def search_view(request, *args, **kwargs):
     q = request.GET.get("q")
     qs = None
@@ -72,7 +72,7 @@ def search_view(request, *args, **kwargs):
     print(qs)
 
     context = {
-        "procucts": qs,
+        "products": qs,
         "search_word": q,
     }
     return render(request, "store/search.html", context)

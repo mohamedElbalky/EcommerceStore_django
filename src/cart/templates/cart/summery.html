@@ -8,103 +8,129 @@ cart
 
 
 {% block content %}
-<div id="delete-alert-box" class="not-visible alert alert-danger" role="alert">
-  You successed to delete book from the cart
-</div>
 
-<div id="update-alert-box" class="not-visible alert alert-success" role="alert">
-  You successed to update book from the cart
-</div>
+
 
 <main class="pt-5">
-  <div class="container">
-    <h1 class="h2">Shopping cart</h1>
+  <div class="container" style="max-width: 1000px">
+    <div class="col-12">
+      <h1 class="h2">Your Cart</h1>
+    </div>
+    <div class="col-12">
+      <p>Manage your <b>items</b> in your cart</p>
+    </div>
+    <hr />
+  </div>
 
-    {% if cart %}
+  <div class="container" style="max-width: 1000px">
 
-    {% for item in cart_ %}
-    {% with product=item.product %}
+    <div class="row g-3">
 
-    <div id="{{product.id}}" class="row mb-2 mt-4 border pt-3 pb-3" style="background-color: #f8f9fa;">
-      <div class="col-md-3 col-lg-2 order-md-first">
-        <img class="img-fluid  mx-auto d-block" alt="Responsive image" src="{{ product.image.url }}">
-      </div>
-      <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
-        <a href="{{product.get_absolute_url}}" class="text-decoration-none text-reset">
-          <h1 class="h5 pt-2">{{product.title}}</h1>
-        </a>
-        <div class="border mt-3">
-          <div class="col ">
-            <div class="row p-3">
-              <div class="col-6">Hardback</div>
-              <div class="col-6 text-end h4 fw-bold">$<span  name="item-product-price" id="{{product.id}}">{{ product.price }}</span></div>
-            </div>
+      {% if cart_ %}
+
+
+
+      <div class="col-12 bg-light p-3 d-flex justify-content-between">
+        <div class="d-flex d-flex-inline">
+          <div class="pe-3">Order</div>
+          <div class="dropdown">
+            <a class="text-reset text-decoration-none dropdown-toggle" href="#" role="link" id="dropdownLink"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Shipping options
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                class="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
+              </svg>
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownLink">
+              <li class="item small">
+                <a onclick="deleveryOption('delivery')" class="dropdown-item" href="#">
+                  Courier delivery</a>
+              </li>
+              <li class="item small">
+                <a onclick="deleveryOption('not-delivery')" class="dropdown-item" href="#">Recipient pickup</a>
+              </li>
+            </ul>
           </div>
-          <div class="col">
-            <div class="row p-3">
-              <div class="col-lg-5 col-md-5 col-sm-3 form-row">
-                <!-- <label for="">Qty</label>
-                <select id="select">
-                  {% with ''|center:item.product.qty as range %}
+        </div>
+        <div class="text-end">
 
-                  {% for _ in range %}
-                  <option value="{{ forloop.counter }}">
-                    {{forloop.counter }}
-                  </option>
+          <div class="" id="subTotal-d">Sub Total: <span class="fw-bold">£</span>
+            <div id="cart-total-price" class="d-inline-flex fw-bold">{{cart.get_total_price}}</div>
+          </div>
+          <div id="delevery-div">Shipping <span class="small">(Courier delivery)</span>: <span class="fw-bold">£<span
+                id="delivery">{{ transport_cost }}</span></span></div>
+          <div class="pt-2">Total to pay: <span class="fw-bold h5">£</span><span id="cart-total-price-after-delivery"
+              class="fw-bold h5"></span></div>
 
+        </div>
+      </div>
+      <div class="col-md-5 col-lg-4 order-md-last p-0 order-3">
+        <div class="d-grid gap-2 ">
+          <a role="button" href="{% url 'order:order_create' %}" class="btn btn-success fw-bold"
+            type="button">Checkout</a>
+          <button class="btn btn-light" type="button">Save for later</button>
+        </div>
+      </div>
+      <div class="col-md-7 col-lg-8 p-0">
 
-                  {% endfor %}
-                  {% endwith %}
-                </select> -->
+        {% for item in cart_ %}
+        {% with product=item.product %}
 
-                <input name="input-list" class="d-inline form-control w-25" data-index="{{product.id}}"
-                  value="{{item.quantity}}" type="number" max="{{product.qty}}" min="1">
+        <div class="card mb-3 border-0 product-item" id="pro-{{product.id}}">
+          <div class="row g-0">
+            <div class="col-md-2 d-none d-md-block">
+              <img class="img-fluid mx-auto d-block" alt="Responsive image" src="{{ product.image.url }}" />
+            </div>
+            <div class="col-md-10 ps-md-3">
+              <div class="card-body p-1">
+                <a class="text-decoration-none text-reset" href="{{item.product.get_absolute_url}}">
+                  <p class="card-text pb-3">{{product.title}}</p>
+                </a>
+                <!-- <label for="select">Qty</label>
+                    <select id="select{{product.id}}" style="width:50px;height:31px;">
+                      <option value="" selected disabled hidden>{{item.qty}}</option>
+                      <option value="">1</option>
+                      <option value="">2</option>
+                      <option value="">3</option>
+                      <option value="">4</option>
+                    </select> -->
+                <input style="width:50px;height:31px;" id="up-{{product.id}}" value="{{item.quantity}}" type="number"
+                  max="{{product.qty}}" min="1">
                 <label for="">Qty</label>
 
+                <button onclick="updateProduct(this.id)" id="{{product.id}}" name="update-btn"
+                  class="update_remove_button_css small ps-3">Update</button>
+                <button onclick="deleteProduct(this.id)" id="{{product.id}}" name="delete-btn"
+                  class="update_remove_button_css small">Delete</button>
               </div>
-              <div class="col-lg-7 col-md-7 col-sm-9 text-end">
 
-                <button id="update-btn" name="update-btn" value="{{product.id}}" type="button"
-                  class="btn btn-secondary btn-sm">Update</button>
-
-                <!-- erorr -->
-                <button id="delete-btn" name="delete-btn" value="{{product.id}}" type="button"
-                  class="btn btn-danger btn-sm ">Delete</button>
-              </div>
+              <small name="test-massage" id="text-message-{{product.id}}" class="text-secondary small">&nbsp; number of
+                available
+                books to buying are
+                {{item.product.qty}}
+                book{{item.product.qty|pluralize}} </small>
             </div>
           </div>
         </div>
-        <small name="test-massage" id="{{product.id}}" class="text-secondary">&dash; number of available books to buying are
-          {{item.product.qty}}
-          book{{item.product.qty|pluralize}} </small>
+        {% endwith %}
+        {% endfor %}
       </div>
+      {% else %}
+      <p class="text-center text-secondary mt-5">You don't have books in your cart yet.. <a
+          href="{% url 'store:all_products' %}">book list</a></p>
+      {% endif %}
     </div>
-    {% endwith %}
 
-    {% endfor %}
-    <div class="col-12 text-end">
-      <div class="h6 fw-bold">Sub total: $<span id="cart-total-price">{{cart.get_total_price}}</span></div>
-    </div>
-    {% else %}
-    <h5 class="text-center text-secondary mb-5  mt-5">You don't have books in your cart, <a
-        href="{% url 'store:all_products' %}">back to book list</a></h5>
-    {% endif %}
   </div>
 </main>
 
 
 
+
 <script>
-  const alertDeleteBox = document.getElementById("delete-alert-box")
-  const alertUpdateBox = document.getElementById("update-alert-box")
-
-  const erorrQtyMessageList = document.getElementsByName("test-massage")
-
-
-  const deleteCartBtns = document.getElementsByName("delete-btn")
-  const updateCartBtn = document.getElementsByName("update-btn")
-
-  const inputList = document.getElementsByName("input-list")
 
   // total number of products from the header
   const totalQuantity = document.getElementById("cart-products-number")
@@ -112,138 +138,163 @@ cart
 
   const cartTotalPrice = document.getElementById("cart-total-price")
 
+  const cartTotalPriceAfterDelivery = document.getElementById("cart-total-price-after-delivery")
+  let delivery = document.getElementById("delivery")
+  let dv = "delivery";
 
-  const itemTotalPrice = document.getElementsByName("item-product-price")
+  //const csrf = document.getElementsByName("csrfmiddlewaretoken")[0].value
+  // console.log(csrf)
+
+  // const itemTotalPrice = document.getElementsByName("item-product-price")
 
 
-  const alertfunc = (alertBoxName) => {
-    alertBoxName.classList.remove("not-visible")
-    setInterval(() => {
-      alertBoxName.classList.add("not-visible")
-    }, 3000)
+  // update the number of products in the navbar
+  if (parseFloat(cartTotalPrice.innerHTML) == 0) {
+    cartTotalPriceAfterDelivery.innerHTML = `0`
+
+  } else {
+
+    cartTotalPriceAfterDelivery.innerHTML = `${parseFloat(cartTotalPrice.innerHTML) + parseFloat(delivery.innerHTML)}`
   }
 
-  // make for loop on all delete buttons in the page
-  deleteCartBtns.forEach(element => {
-    // when click delete button
-    element.addEventListener("click", e => {
-      e.preventDefault()
-      
-      // determine productId from delete button atribute (value) 
-      const productId = e.target.value;
-
-      $.ajax({
-        type: "POST",
-        url: "{% url 'cart:cart_delete' %}",
-        data: {
-          "csrfmiddlewaretoken": "{{csrf_token}}",
-          "product_id": productId,
-          "action": "delete",
-        },
-        success: function (data) {
-
-          alertfunc(alertDeleteBox)
-
-          // remove the item from the page
-          document.getElementById(productId).remove()
-
-          // update total cart products number and total cart price
-          totalQuantity.innerHTML = data.cart_length
-          cartTotalPrice.innerHTML = data.cart_total_price
-        },
-        error: (xhr, errmsg, err) => {
-          console.log(err)
-        }
-      })
-    })
-  });
 
 
-  const getTextMessage = (erorrQtyMessageList, productId, type, data=null) => {
-    erorrQtyMessageList.forEach(el => {
-      const erorrMessageId = el.getAttribute("id")
-      if (erorrMessageId == productId) {
-        if (type == "updated") {
-          el.innerHTML = `&dash; books quantity updated`
-          el.classList.remove("text-danger")
-          el.classList.add("text-success")
+  // delete product
+  function deleteProduct(id) {
+    const productId = id
+    $.ajax({
+      type: "POST",
+      url: "{% url 'cart:cart_delete' %}",
+      data: {
+        "csrfmiddlewaretoken": "{{csrf_token}}",
+        "product_id": productId,
+        "action": "delete",
+      },
+      success: function (data) {
+
+
+        // remove the item from the page
+        let proId = `pro-${productId}`
+        document.getElementById(proId).remove()
+
+        // update total cart products number and total cart price
+        totalQuantity.innerHTML = data.cart_length
+        cartTotalPrice.innerHTML = data.cart_total_price
+        delivery.innerHTML = data.transport_cost
+
+        if (parseFloat(cartTotalPrice.innerHTML) == 0) {
+          cartTotalPriceAfterDelivery.innerHTML = `0`
+
         } else {
-          if (type == "not-updated") {
-            el.innerHTML = `&dash; The quantity must greater than 0 and less than or equal ${data.erorr_quantity}`
-            el.classList.remove("text-secondary")
-            el.classList.add("text-danger")
-          }
+
+          cartTotalPriceAfterDelivery.innerHTML = `${parseFloat(cartTotalPrice.innerHTML) + parseFloat(data.transport_cost)}`
         }
-        
-        
+
+      },
+      error: (xhr, errmsg, err) => {
+        console.log(err)
       }
     })
+  }
+
+
+
+
+  const getTextMessage = (productId, type, data = null) => {
+    const errorMessageId = document.getElementById(`text-message-${productId}`)
+    if (type == "updated") {
+      errorMessageId.innerHTML = `&nbsp; books quantity updated`
+      errorMessageId.classList.remove("text-danger")
+      errorMessageId.classList.add("text-success")
+    } else {
+      if (type == "not-updated") {
+        errorMessageId.innerHTML = `&nbsp; The quantity must greater than 0 and less than or equal ${data.erorr_quantity}`
+        errorMessageId.classList.remove("text-secondary")
+        errorMessageId.classList.add("text-danger")
+      }
+    }
 
   }
 
-  updateCartBtn.forEach(element => {
-    element.addEventListener("click", e => {
-      e.preventDefault();
-      const productId = e.target.value;
-      let qty;
-      inputList.forEach(el => {
-        const inputIndex = el.getAttribute("data-index")
-        if (inputIndex == productId) {
-          qty = el.value
 
-        }
-      })
-      // console.log(qty)
+  function updateProduct(id) {
+    const productId = id;
+    let qty = document.getElementById(`up-${productId}`).value
+    // console.log(qty)
+    $.ajax({
+      type: "POST",
+      url: "{% url 'cart:cart_update' %}",
+      data: {
+        "csrfmiddlewaretoken": "{{csrf_token}}",
+        "product_id": productId,
+        "quantity": qty,
+        "action": "put"
+      },
+      success: function (data) {
+        console.log(data)
 
-      $.ajax({
-        type: "POST",
-        url: "{% url 'cart:cart_update' %}",
-        data: {
-          "csrfmiddlewaretoken": "{{csrf_token}}",
-          "product_id": productId,
-          "quantity": qty,
-          "action": "put"
-        },
-        success: function (data) {
-          console.log(data)
+        if (data.erorr_quantity) {
 
-          if (data.erorr_quantity) {
+          getTextMessage(productId, "not-updated", data = data)
 
-            getTextMessage(erorrQtyMessageList, productId, "not-updated", data=data)
+        } else {
 
+
+          totalQuantity.innerHTML = data.cart_length
+          cartTotalPrice.innerHTML = data.cart_total_price
+          delivery.innerHTML = data.transport_cost
+
+          if (parseFloat(cartTotalPrice.innerHTML) == 0) {
+            cartTotalPriceAfterDelivery.innerHTML = `0`
           } else {
 
+            if (dv === "delivery") {
 
-            alertfunc(alertUpdateBox)
+              cartTotalPriceAfterDelivery.innerHTML = `${parseFloat(cartTotalPrice.innerHTML) + parseFloat(data.transport_cost)}`
+            } else {
+              cartTotalPriceAfterDelivery.innerHTML = `${parseFloat(cartTotalPrice.innerHTML)}`
 
-            totalQuantity.innerHTML = data.cart_length
-            cartTotalPrice.innerHTML = data.cart_total_price
-
-
-            getTextMessage(erorrQtyMessageList, productId, "updated")
-
-            // update item total price
-            itemTotalPrice.forEach(el => {
-              const product_id = el.id
-              if (product_id == productId) {
-                el.innerHTML = data.item_total_price
-              }
-            })
-
+            }
           }
-        },
-        error: function (xhr, errmsg, err) {
-          console.log(errmsg)
+
+
+
+          getTextMessage(productId, "updated")
+
+          // update item total price
+          // itemTotalPrice.forEach(el => {
+          //   const product_id = el.id
+          //   if (product_id == productId) {
+          //     el.innerHTML = data.item_total_price
+          //   }
+          // })
+
         }
-
-      })
-
+      },
+      error: function (xhr, errmsg, err) {
+        console.log(errmsg)
+      }
 
     })
-  });
+  }
 
 
-  
+  function deleveryOption(delevery) {
+    dv = delevery
+    if (delevery != "delivery") {
+      document.getElementById("subTotal-d").classList.add("not-visible")
+      document.getElementById("delevery-div").classList.add("not-visible")
+      cartTotalPriceAfterDelivery.innerHTML = `${parseFloat(cartTotalPrice.innerHTML)}`
+    } else {
+      document.getElementById("subTotal-d").classList.remove("not-visible")
+      document.getElementById("delevery-div").classList.remove("not-visible")
+      cartTotalPriceAfterDelivery.innerHTML = `${parseFloat(cartTotalPrice.innerHTML) + parseFloat(delivery.innerHTML)}`
+    }
+  }
+
+
+
+
 
 </script>
 
